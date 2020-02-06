@@ -1,6 +1,8 @@
 use std::cmp::max;
 use std::collections::HashMap;
-// use std::time::Instant;
+
+mod arithmetic;
+use arithmetic::{small_primes, small_primes_nth};
 
 fn pb1() {
     let mut sum = 0;
@@ -85,11 +87,10 @@ fn pb5() {
     for i in 2..21 {
         let f = prime_factors(i);
         for (p, n) in f.iter() {
-            let a = match target.get(p) {
+            let a = *(match target.get(p) {
                 Some(vv) => max(vv, n),
                 None => n,
-            }
-            .clone();
+            });
             target.insert(*p, a);
         }
     }
@@ -109,51 +110,6 @@ fn pb6() {
     }
     println!("Pb6: {}", square_of.pow(2) - sum_of);
 }
-fn is_prime(n: u64, current_primes: &[u64]) -> bool {
-    if n < 2 {
-        return false;
-    }
-    for a in current_primes {
-        if n % a == 0 {
-            return false;
-        }
-    }
-    true
-}
-
-fn small_primes_nth(n: u64) -> Vec<u64> {
-    let mut primes = Vec::new();
-    let mut a = 2;
-    while (primes.len() as u64) < n {
-        if is_prime(a, &primes) {
-            primes.push(a);
-        }
-        a += 1;
-    }
-    primes
-}
-fn small_primes(_n: u64) -> Vec<u64> {
-    let n = _n as usize;
-    let mut primes = Vec::new();
-    let mut sieve: Vec<bool> = vec![true; n];
-    sieve[0] = false;
-    sieve[1] = false;
-    let mut prime: usize = 2;
-    while prime < n {
-        primes.push(prime as u64);
-        let mut non_prime = prime * 2;
-        while non_prime < n {
-            sieve[non_prime] = false;
-            non_prime += prime;
-        }
-
-        prime += 1;
-        while prime < n && !sieve[prime] {
-            prime += 1
-        }
-    }
-    primes
-}
 
 fn pb7() {
     let primes = small_primes_nth(10001);
@@ -169,7 +125,7 @@ fn pb8() {
     for b in number.iter() {
         digits[index] = (b - 48).into();
         index = (index + 1) % N;
-        let product = digits.iter().fold(1u64, |a, &b| a * b);
+        let product = digits.iter().product();
         if product > max_product {
             max_product = product;
         }
@@ -192,7 +148,7 @@ fn pb9() {
 }
 fn pb10() {
     let primes = small_primes(2_000_000);
-    println!("Pb10: {}", primes.iter().fold(0u64, |a, &b| a + b)));
+    println!("Pb10: {}", primes.iter().sum::<u64>());
 }
 fn main() {
     pb1();
@@ -205,7 +161,4 @@ fn main() {
     pb8();
     pb9();
     pb10();
-    // let now = Instant::now();
-    // let new_now = Instant::now();
-    // println!("Pb7 took : {:?}", new_now.duration_since(now));
 }
