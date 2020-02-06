@@ -16,7 +16,7 @@ fn pb2() {
     let mut sum = 0;
     let mut a = 0;
     let mut b = 1;
-    while b < 4000000 {
+    while b < 4_000_000 {
         let c = a + b;
         if c % 2 == 0 {
             sum += c
@@ -34,17 +34,17 @@ fn prime_factors(n: u64) -> HashMap<u64, u64> {
     let mut a = 2;
     while a <= tmp {
         if tmp % a == 0 {
-            tmp = tmp / a;
+            tmp /= a;
             *v.entry(a).or_insert(0) += 1;
         } else {
             a += 1
         }
     }
-    return v;
+    v
 }
 
 fn pb3() {
-    let n = 600851475143;
+    let n = 600_851_475_143;
     prime_factors(6);
     let primes = prime_factors(n);
     let m = primes.keys().max().unwrap();
@@ -64,7 +64,7 @@ fn is_palindrome(n: u64) -> bool {
         a += 1;
         b -= 1;
     }
-    return true;
+    true
 }
 
 fn pb4() {
@@ -109,7 +109,7 @@ fn pb6() {
     }
     println!("Pb6: {}", square_of.pow(2) - sum_of);
 }
-fn is_prime(n: u64, current_primes: &Vec<u64>) -> bool {
+fn is_prime(n: u64, current_primes: &[u64]) -> bool {
     if n < 2 {
         return false;
     }
@@ -118,7 +118,7 @@ fn is_prime(n: u64, current_primes: &Vec<u64>) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn small_primes_nth(n: u64) -> Vec<u64> {
@@ -130,7 +130,7 @@ fn small_primes_nth(n: u64) -> Vec<u64> {
         }
         a += 1;
     }
-    return primes;
+    primes
 }
 fn small_primes(_n: u64) -> Vec<u64> {
     let n = _n as usize;
@@ -148,11 +148,11 @@ fn small_primes(_n: u64) -> Vec<u64> {
         }
 
         prime += 1;
-        while prime < n && sieve[prime] == false {
+        while prime < n && !sieve[prime] {
             prime += 1
         }
     }
-    return primes;
+    primes
 }
 
 fn pb7() {
@@ -184,17 +184,15 @@ fn pb9() {
             let c2 = (a as u64).pow(2) + (b as u64).pow(2);
             let s = (c2 as f64).sqrt();
             let c = s as u64;
-            if a + b + c == 1000 {
-                if s.fract() == 0.0 {
-                    println!("Pb9: {}", a * b * c);
-                }
+            if a + b + c == 1000 && s.fract() == 0.0 {
+                println!("Pb9: {}", a * b * c);
             }
         }
     }
 }
 fn pb10() {
-    let primes = small_primes(2000000);
-    println!("Pb10: {}", primes.iter().fold(0u64, |a, &b| a + b));
+    let primes = small_primes(2_000_000);
+    println!("Pb10: {}", primes.iter().fold(0u64, |a, &b| a + b)));
 }
 fn main() {
     pb1();
