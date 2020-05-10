@@ -42,3 +42,41 @@ pub fn small_primes(_n: u64) -> Vec<u64> {
     }
     primes
 }
+
+pub fn prime_factors(n: u64, primes: &[u64]) -> Vec<(u64, u32)> {
+    if n <= 1 {
+        return vec![];
+    }
+
+    let mut number = n;
+    let mut prime_factors = vec![];
+
+    for prime in primes {
+        let mut power = 0;
+        while number % prime == 0 {
+            number /= prime;
+            power += 1;
+        }
+        if power > 0 {
+            prime_factors.push((*prime, power));
+        }
+        if number == 1 {
+            break;
+        }
+    }
+    prime_factors
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_factors() {
+        let primes = small_primes(100);
+        assert_eq!(prime_factors(2, &primes), vec![(2, 1)]);
+        assert_eq!(prime_factors(6, &primes), vec![(2, 1), (3, 1)]);
+        assert_eq!(prime_factors(8, &primes), vec![(2, 3)]);
+        assert_eq!(prime_factors(49 * 3, &primes), vec![(3, 1), (7, 2)]);
+    }
+}
