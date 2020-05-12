@@ -1,14 +1,17 @@
 #![feature(concat_idents)]
+use std::time::Instant;
 use structopt::StructOpt;
 
 mod arithmetic;
 mod eleven_twenty;
 mod one_ten;
 mod sixty_seventy;
+mod twenty_thirty;
 
 pub use eleven_twenty::*;
 pub use one_ten::*;
 pub use sixty_seventy::*;
+pub use twenty_thirty::*;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "euler", about = "Choose problem to solve")]
@@ -40,6 +43,16 @@ fn call(n: i64) {
         18 => pb18(),
         19 => pb19(),
         20 => pb20(),
+        21 => pb21(),
+        22 => pb22(),
+        23 => pb23(),
+        24 => pb24(),
+        25 => pb25(),
+        26 => pb26(),
+        27 => pb27(),
+        28 => pb28(),
+        29 => pb29(),
+        30 => pb30(),
         67 => pb67(),
         _ => panic!("Problem {} not solved", n),
     }
@@ -47,5 +60,7 @@ fn call(n: i64) {
 
 fn main() {
     let opt = Opt::from_args();
+    let now = Instant::now();
     call(opt.problem_number);
+    println!("Time: {:?}", now.elapsed());
 }
