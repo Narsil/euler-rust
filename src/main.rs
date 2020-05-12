@@ -1,16 +1,19 @@
-#![feature(concat_idents)]
 use std::time::Instant;
 use structopt::StructOpt;
 
 mod arithmetic;
+#[macro_use]
+mod combinatorics;
 mod eleven_twenty;
 mod one_ten;
 mod sixty_seventy;
+mod thirty_forty;
 mod twenty_thirty;
 
 pub use eleven_twenty::*;
 pub use one_ten::*;
 pub use sixty_seventy::*;
+pub use thirty_forty::*;
 pub use twenty_thirty::*;
 
 #[derive(Debug, StructOpt)]
@@ -53,6 +56,16 @@ fn call(n: i64) {
         28 => pb28(),
         29 => pb29(),
         30 => pb30(),
+        31 => pb31(),
+        32 => pb32(),
+        33 => pb33(),
+        34 => pb34(),
+        35 => pb35(),
+        36 => pb36(),
+        37 => pb37(),
+        38 => pb38(),
+        39 => pb39(),
+        40 => pb40(),
         67 => pb67(),
         _ => panic!("Problem {} not solved", n),
     }
