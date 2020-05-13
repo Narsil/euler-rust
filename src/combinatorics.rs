@@ -2,15 +2,18 @@
 // Macro because array seems better than vec here (small array).
 macro_rules! permutations {
     ($n: expr, $name: ident, $itname: ident) => {
+        permutations!($n, $name, $itname, u8);
+    };
+    ($n: expr, $name: ident, $itname: ident, $type: ident) => {
         struct $itname {
-            elements: [u8; $n],
+            elements: [$type; $n],
             started: bool,
         }
 
         impl Iterator for $itname {
-            type Item = [u8; $n];
+            type Item = [$type; $n];
 
-            fn next(&mut self) -> Option<[u8; $n]> {
+            fn next(&mut self) -> Option<[$type; $n]> {
                 // println!("---");
                 if !self.started {
                     self.started = true;
@@ -18,7 +21,7 @@ macro_rules! permutations {
                 }
                 // println!("elements {:?}", self.elements);
                 #[inline]
-                fn swap(i: usize, j: usize, array: &mut [u8; $n]) {
+                fn swap(i: usize, j: usize, array: &mut [$type; $n]) {
                     let tmp = array[i];
                     array[i] = array[j];
                     array[j] = tmp;
@@ -57,7 +60,7 @@ macro_rules! permutations {
                 return None;
             }
         }
-        fn $name(elements: [u8; $n]) -> $itname {
+        fn $name(elements: [$type; $n]) -> $itname {
             $itname {
                 elements,
                 started: false,

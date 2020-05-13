@@ -4,13 +4,16 @@ use structopt::StructOpt;
 mod arithmetic;
 #[macro_use]
 mod combinatorics;
+mod digits;
 mod eleven_twenty;
+mod forty_fifty;
 mod one_ten;
 mod sixty_seventy;
 mod thirty_forty;
 mod twenty_thirty;
 
 pub use eleven_twenty::*;
+pub use forty_fifty::*;
 pub use one_ten::*;
 pub use sixty_seventy::*;
 pub use thirty_forty::*;
@@ -66,6 +69,16 @@ fn call(n: i64) {
         38 => pb38(),
         39 => pb39(),
         40 => pb40(),
+        41 => pb41(),
+        42 => pb42(),
+        43 => pb43(),
+        44 => pb44(),
+        45 => pb45(),
+        46 => pb46(),
+        47 => pb47(),
+        48 => pb48(),
+        49 => pb49(),
+        50 => pb50(),
         67 => pb67(),
         _ => panic!("Problem {} not solved", n),
     }
