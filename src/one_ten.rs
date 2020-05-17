@@ -1,7 +1,7 @@
+use crate::arithmetic::{small_primes, small_primes_nth};
+use crate::digits::is_palindrome;
 use std::cmp::max;
 use std::collections::HashMap;
-
-use crate::arithmetic::{small_primes, small_primes_nth};
 
 pub fn pb1() {
     let mut sum = 0;
@@ -50,22 +50,6 @@ pub fn pb3() {
     let primes = prime_factors(n);
     let m = primes.keys().max().unwrap();
     println!("Pb3: {}", m);
-}
-
-pub fn is_palindrome(n: u64) -> bool {
-    let s = n.to_string();
-    let by = s.as_bytes();
-    let mut a = 0;
-    let mut b = by.len() - 1;
-
-    while a <= b {
-        if by[a] != by[b] {
-            return false;
-        }
-        a += 1;
-        b -= 1;
-    }
-    true
 }
 
 pub fn pb4() {

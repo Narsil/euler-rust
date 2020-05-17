@@ -1,4 +1,4 @@
-use crate::digits::{digits, from_digits};
+use crate::digits::{digits, from_digits, is_palindrome};
 use num::integer::gcd;
 use num::pow::pow;
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -14,7 +14,7 @@ pub fn pb31() {
 
     for coin in coins.iter() {
         for j in *coin..=AMOUNT {
-            ways[j] = ways[j] + ways[j - coin];
+            ways[j] += ways[j - coin];
         }
     }
     println!("Pb31 : {}", ways[AMOUNT]);
@@ -141,19 +141,19 @@ pub fn pb33() {
 }
 
 pub fn pb34() {
-    let mut facto_digits = [0usize; 10];
-    let mut fact: usize = 1;
+    let mut facto_digits = [0u64; 10];
+    let mut fact: u64 = 1;
     facto_digits[0] = 1;
-    for i in 1..=9 {
-        fact *= i;
-        facto_digits[i] = fact;
+    for (i, facto_digit) in facto_digits.iter_mut().enumerate().skip(1) {
+        fact *= i as u64;
+        *facto_digit = fact;
     }
 
     let mut sum = 0;
     for i in 3..1_000_000 {
-        let mut s = 0;
+        let mut s: u64 = 0;
         for digit in digits(i) {
-            s += facto_digits[digit];
+            s += facto_digits[digit as usize];
         }
         if s == i {
             sum += i;
@@ -168,11 +168,7 @@ pub fn pb35() {
     let primes: HashSet<u64> =
         HashSet::from_iter(crate::arithmetic::small_primes(1_000_000).into_iter());
     for p in &primes {
-        let mut digs = digits(*p as usize)
-            .collect::<Vec<_>>()
-            .into_iter()
-            .rev()
-            .collect::<VecDeque<_>>();
+        let mut digs = digits(*p).in_order().into_iter().collect::<VecDeque<_>>();
         let mut stop = false;
         for _ in 0..digs.len() {
             let f = digs.pop_front().unwrap();
@@ -190,24 +186,19 @@ pub fn pb35() {
     println!("Pb35: {}", sum);
 }
 
-fn is_palindrome(i: usize) -> bool {
-    let digs = digits(i).collect::<Vec<_>>();
-    digs.clone().into_iter().rev().eq(digs)
-}
-
-fn binary_digits(mut i: usize) -> Vec<bool> {
+fn binary_digits(mut i: u64) -> Vec<bool> {
     let mut vec = vec![];
     while i > 0 {
         let digit = (i & 1) != 0;
         vec.push(digit);
-        i = i >> 1;
+        i >>= 1;
     }
     vec
 }
 
-fn is_binary_palindrome(i: usize) -> bool {
+fn is_binary_palindrome(i: u64) -> bool {
     let digs = binary_digits(i);
-    digs.clone().iter().rev().eq(digs.iter())
+    digs.iter().rev().eq(digs.iter())
 }
 
 pub fn pb36() {
@@ -226,11 +217,7 @@ pub fn pb37() {
         HashSet::from_iter(crate::arithmetic::small_primes(1_000_000).into_iter());
     let mut sum = 0;
     for p in &primes {
-        let digs = digits((*p).try_into().unwrap())
-            .collect::<Vec<_>>()
-            .into_iter()
-            .rev()
-            .collect::<Vec<_>>();
+        let digs = digits((*p).try_into().unwrap()).in_order();
         if digs.len() == 1 {
             continue;
         }
@@ -258,10 +245,7 @@ permutations!(9, permutations9, PermIterator9);
 pub fn pb38() {
     for permutation in permutations9([1, 2, 3, 4, 5, 6, 7, 8, 9]) {
         // 2-N
-        let digits = permutation
-            .iter()
-            .map(|i| (10 - i) as usize)
-            .collect::<Vec<usize>>();
+        let digits = permutation.iter().map(|i| (10 - i)).collect::<Vec<_>>();
         let left = from_digits(&digits[..4]);
         let right = from_digits(&digits[4..]);
         // Incomplete solution but works with only 2 parts ! Yeah
@@ -314,7 +298,7 @@ impl Iterator for IrrDigits {
     fn next(&mut self) -> Option<Self::Item> {
         if self.digits.is_empty() {
             self.n += 1;
-            self.digits = digits(self.n as usize).map(|i| i as u8).collect::<Vec<_>>()
+            self.digits = digits(self.n.into()).map(|i| i as u8).collect::<Vec<_>>()
         }
         self.digits.pop()
     }

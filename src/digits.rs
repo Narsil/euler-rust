@@ -1,9 +1,25 @@
+use std::convert::TryInto;
+
+pub type Digit = u8;
+pub type Index = usize;
+pub type Number = u64;
+
 pub struct DigitIterator {
-    n: usize,
+    n: Number,
+}
+
+impl DigitIterator {
+    pub fn in_order(self) -> Vec<Digit> {
+        self.collect::<Vec<_>>()
+            .iter()
+            .cloned()
+            .rev()
+            .collect::<Vec<_>>()
+    }
 }
 
 impl Iterator for DigitIterator {
-    type Item = usize;
+    type Item = Digit;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.n == 0 {
@@ -11,16 +27,16 @@ impl Iterator for DigitIterator {
         } else {
             let d = self.n % 10;
             self.n /= 10;
-            Some(d)
+            Some(d.try_into().unwrap())
         }
     }
 }
 
-pub fn digits(n: usize) -> DigitIterator {
+pub fn digits(n: Number) -> DigitIterator {
     DigitIterator { n }
 }
 
-pub fn from_digits(digits: &[usize]) -> u64 {
+pub fn from_digits(digits: &[Digit]) -> u64 {
     let mut pow = 1;
     let mut number = 0u64;
     for i in 0..digits.len() {
@@ -29,4 +45,27 @@ pub fn from_digits(digits: &[usize]) -> u64 {
         pow *= 10;
     }
     number
+}
+
+pub fn is_palindrome(i: u64) -> bool {
+    let digs = digits(i).collect::<Vec<_>>();
+    digs.clone().into_iter().rev().eq(digs)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_digits() {
+        let mut digs = digits(1234);
+        assert_eq!(digs.next(), Some(4));
+        assert_eq!(digs.next(), Some(3));
+        assert_eq!(digs.next(), Some(2));
+        assert_eq!(digs.next(), Some(1));
+        assert_eq!(digs.next(), None);
+
+        let digs = digits(1234).in_order();
+        assert_eq!(digs, vec![1, 2, 3, 4]);
+    }
 }

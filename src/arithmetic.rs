@@ -13,19 +13,25 @@ pub fn is_prime(n: u64, current_primes: &[u64]) -> Option<bool> {
             return Some(false);
         }
     }
-    let last_prime = current_primes.last().unwrap();
-    if n < last_prime * last_prime {
-        Some(false)
+    if let Some(last_prime) = current_primes.last() {
+        if n < last_prime * last_prime {
+            Some(true)
+        } else {
+            None
+        }
     } else {
         None
     }
 }
 pub fn small_primes_nth(n: u64) -> Vec<u64> {
-    let mut primes = Vec::new();
+    let mut primes = vec![];
     let mut a = 2;
     while (primes.len() as u64) < n {
-        if is_prime(a, &primes).is_none() {
-            primes.push(a);
+        match is_prime(a, &primes) {
+            Some(true) | None => {
+                primes.push(a);
+            }
+            _ => {}
         }
         a += 1;
     }
@@ -141,7 +147,7 @@ mod tests {
         assert_eq!(is_prime(4, &primes), Some(false));
         assert_eq!(is_prime(256, &primes), Some(false));
         // Exceeded options but 101 < 97**2.
-        assert_eq!(is_prime(101, &primes), Some(false));
+        assert_eq!(is_prime(101, &primes), Some(true));
         // 9479 > 97**2
         assert_eq!(is_prime(9479, &primes), None);
     }

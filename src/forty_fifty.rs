@@ -1,4 +1,4 @@
-use crate::digits::{digits, from_digits};
+use crate::digits::{digits, from_digits, Digit};
 use std::collections::HashSet;
 use std::convert::TryInto;
 use std::fs::read_to_string;
@@ -6,7 +6,7 @@ use std::iter::FromIterator;
 
 // permutations!(9, permutations9, PermIterator9);
 // permutations!(8, permutations8, PermIterator8);
-permutations!(7, permutations7, PermIterator7);
+permutations!(7, permutations7, PermIterator7, Digit);
 // permutations!(6, permutations6, PermIterator6);
 // permutations!(5, permutations5, PermIterator5);
 
@@ -42,13 +42,8 @@ pub fn pb41() {
     // }
     for permutation in permutations7([1, 2, 3, 4, 5, 6, 7]) {
         // 2-N
-        let pan_number = from_digits(
-            &permutation
-                .iter()
-                .map(|i| (8 - i) as usize)
-                .collect::<Vec<usize>>()[..],
-        );
-        if !primes.get(&pan_number).is_none() {
+        let pan_number = from_digits(&permutation.iter().map(|i| (8 - i)).collect::<Vec<_>>()[..]);
+        if primes.get(&pan_number).is_some() {
             println!("Pb41: {}", pan_number);
             return;
         }
@@ -61,12 +56,12 @@ pub fn pb42() {
     let data = string.trim().split(',').map(|w| w.trim_matches('"'));
     let scores = data.map(|w| w.chars().map(|c| (c as u32) - 64).sum());
     let num = scores
-        .filter(|s| !triangle_numbers.get(&s).is_none())
+        .filter(|s| triangle_numbers.get(&s).is_some())
         .count();
     println!("Pb42: {}", num);
 }
 
-permutations!(10, permutations10, PermIterator10, usize);
+permutations!(10, permutations10, PermIterator10, Digit);
 pub fn pb43() {
     let mut sum = 0;
     for permutation in permutations10([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
@@ -91,7 +86,7 @@ pub fn pb44() {
         for pk in &pentagonals {
             if let Some(pj) = pentagonals.get(&(pi - pk)) {
                 let diff = (pj - pk).abs();
-                if let Some(_) = pentagonals.get(&diff) {
+                if pentagonals.get(&diff).is_some() {
                     println!("Pb44: {}", diff);
                     return;
                 }
@@ -109,30 +104,30 @@ pub fn pb45() {
     // (n + 1) (n + 2) / 2  - n (n+1) / 2 = [(n**2 + 3n + 2) - n **2 - n)] / 2
     // = (2n + 2) / 2 = n + 1
 
-    let mut t = i * (i + 1) / 2;
-    let mut p = j * (3 * j - 1) / 2;
-    let mut h = k * (2 * k - 1);
+    let mut triangle = i * (i + 1) / 2;
+    let mut pentagonal = j * (3 * j - 1) / 2;
+    let mut hexagonal = k * (2 * k - 1);
 
     loop {
         // println!("t {}, p{} ,h{}", t, p, h);
-        while t < p || t < h {
+        while triangle < pentagonal || triangle < hexagonal {
             i += 1;
-            t += i;
+            triangle += i;
         }
-        while p < t || p < h {
+        while pentagonal < triangle || pentagonal < hexagonal {
             j += 1;
-            p = j * (3 * j - 1) / 2;
+            pentagonal = j * (3 * j - 1) / 2;
         }
-        while h < t || h < p {
+        while hexagonal < triangle || hexagonal < pentagonal {
             k += 1;
-            h = k * (2 * k - 1);
+            hexagonal = k * (2 * k - 1);
         }
-        if t == p && p == h && t != 40755 {
-            println!("Pb45: {}", t);
+        if triangle == pentagonal && pentagonal == hexagonal && triangle != 40755 {
+            println!("Pb45: {}", triangle);
             return;
         }
         i += 1;
-        t += i;
+        triangle += i;
     }
 }
 pub fn pb46() {
@@ -140,8 +135,8 @@ pub fn pb46() {
     let primes = crate::arithmetic::small_primes(LIMIT.into());
     let a_limit = 100;
     let mut sieve = [false; LIMIT as usize];
-    for i in 0..9 {
-        sieve[i] = true;
+    for siev in sieve.iter_mut().take(9) {
+        *siev = true;
     }
     let mut last_prime = 2;
     for prime in &primes {
@@ -172,7 +167,7 @@ pub fn pb47() {
     let n = 4;
     for i in 2..limit {
         // Speedup because prime_factors of large primes is slow.
-        if !primes_set.get(&i.try_into().unwrap()).is_none() {
+        if primes_set.get(&i.try_into().unwrap()).is_some() {
             previous.clear();
             continue;
         }
@@ -191,8 +186,7 @@ pub fn pb47() {
 
 const LAST_TEN: u128 = 10_000_000_000;
 fn get(i: u128, power: u128) -> u128 {
-    //println!("I {}^{}", i, power);
-    let res = if power == 1 {
+    if power == 1 {
         i
     } else if power % 2 == 0 {
         let r = get(i, power / 2);
@@ -200,9 +194,7 @@ fn get(i: u128, power: u128) -> u128 {
     } else {
         let r = get(i, (power - 1) / 2);
         (((r * r) % LAST_TEN) * i) % LAST_TEN
-    };
-    // println!("Res {}", res);
-    res
+    }
 }
 
 pub fn pb48() {
@@ -225,10 +217,10 @@ pub fn pb49() {
         if p1 == &1487 {
             continue;
         }
-        let mut digs1 = digits((*p1) as usize).collect::<Vec<_>>();
+        let mut digs1 = digits(*p1).collect::<Vec<_>>();
         digs1.sort();
         for p2 in &primes[i + 1..] {
-            let mut digs2 = digits((*p2) as usize).collect::<Vec<_>>();
+            let mut digs2 = digits(*p2).collect::<Vec<_>>();
             digs2.sort();
             if !digs1.iter().eq(digs2.iter()) {
                 continue;
@@ -237,7 +229,7 @@ pub fn pb49() {
             if primes_set.get(&p3).is_none() {
                 continue;
             }
-            let mut digs3 = digits((p3) as usize).collect::<Vec<_>>();
+            let mut digs3 = digits(p3).collect::<Vec<_>>();
             digs3.sort();
             if digs1.iter().eq(digs3.iter()) {
                 println!("Pb49 {}{}{}", p1, p2, p3);
@@ -260,9 +252,6 @@ pub fn pb50() {
         if *p > limit / 21 {
             break;
         }
-        if i % 1000 == 0 {
-            println!("i {}", i);
-        }
         if i < max_len {
             continue;
         }
@@ -274,14 +263,12 @@ pub fn pb50() {
             if len < max_len {
                 break;
             }
-            if !primes_set.get(&sum2).is_none() {
-                if len > max_len {
-                    max = sum2;
-                    max_len = len;
-                }
+            if primes_set.get(&sum2).is_some() && len > max_len {
+                max = sum2;
+                max_len = len;
             }
             sum2 -= p2;
         }
     }
-    println!("Pb 50 {} (lenth {})", max, max_len);
+    println!("Pb 50 {}", max);
 }
