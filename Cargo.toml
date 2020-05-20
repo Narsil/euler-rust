@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 structopt = "*"
 num-bigint = "*"
+num-traits = "*"
 num = "*"
 maplit = "*"
 itertools = "0.9"

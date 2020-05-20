@@ -99,7 +99,16 @@ fn main() {
         58 => &(pb58 as fn() -> ()),
         59 => &(pb59 as fn() -> ()),
         60 => &(pb60 as fn() -> ()),
+        61 => &(pb61 as fn() -> ()),
+        62 => &(pb62 as fn() -> ()),
+        63 => &(pb63 as fn() -> ()),
+        64 => &(pb64 as fn() -> ()),
+        65 => &(pb65 as fn() -> ()),
+        66 => &(pb66 as fn() -> ()),
         67 => &(pb67 as fn() -> ()),
+        68 => &(pb68 as fn() -> ()),
+        69 => &(pb69 as fn() -> ()),
+        70 => &(pb70 as fn() -> ()),
     };
     match opt.problem_number {
         Some(n) => call(problems_map.get(&n).unwrap()),

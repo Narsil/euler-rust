@@ -41,6 +41,10 @@ pub fn from_digits(digits: &[Digit]) -> u64 {
     let mut number = 0u64;
     for i in 0..digits.len() {
         let index = digits.len() - 1 - i;
+        let d = digits[index];
+        if d >= 10 {
+            panic!("{} is not a digit !", d);
+        }
         number += digits[index] as u64 * pow;
         pow *= 10;
     }
